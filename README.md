@@ -33,13 +33,15 @@ python main.py data/red_bull_ring-porsche_718_cayman_gt4.csv
 Currently unavailable
 
 ## Project Structure:
+```text
 ├── data/               # Raw MoTeC telemetry (.csv)
 ├── processed_data/     # Cleaned data after SG filtering
 ├── src/                
 │   ├── process_data.py # Data parsing, unit conversion & SG filter
 │   └── run_sindy.py    # SINDy model fitting & library setup
-├── main.py             
+├── main.py             # Automated workflow entry point
 └── notebooks/          # Exploratory analysis & visualization
+```
 
 
 ## Acknowledgment: 
@@ -51,14 +53,14 @@ AI Disclosure: AI-assisted coding tools were used for workflow scaffolding and r
 * **[2026-03-08] v0.1.0 - Framework Initialization & Physics-Informed Tuning**
 Established the initial data pipeline and SINDy pipeline. The model fidelity (R² score) was systematically improved through the following experimental iterations:
 
-* **R² = 0.0976 (Baseline)**: Initialized the framework and ran vanilla SINDy directly on raw telemetry data.
-* **R² = 0.1349 (Physics-Informed I/O)**: Manually decoupled independent variables (control inputs: Steering, Throttle, Brake) and dependent variables (states: G-forces, Speed, Yaw) based on vehicle dynamics principles.
-* **R² = 0.2560 (Signal Processing)**: Integrated a Savitzky-Golay (SG) filter to suppress high-frequency sensor noise while preserving the transient peaks crucial for derivative calculations.
-* **R² = 0.2953 (Addressing Coefficient Scaling)**: Identified a critical algorithmic bottleneck: large magnitudes of high-speed $V^2$ terms resulted in extremely small coefficients, which were prematurely zeroed out by the STLSQ threshold. Introduced specific aerodynamic scaling/priors to force the retention of drag-related terms.
-* **R² = 0.4334 (Experimental Control & Clean Data)**: 
-    * *Observation*: The initial dataset (GT3 at Nürburgring GP, 50-min race) contained too many unobserved latent variables (fuel weight reduction, tire thermal degradation, track bumpiness, and dirty air from dogfights).
-    * *Action*: Switched the baseline dataset to a controlled environment (Porsche 718 GT4 Clubsport at Red Bull Ring, continuous practice laps with heavy fuel and stable conditions). 
-    * *Result*: Stripping away complex aero and degradation noise allowed the model to successfully capture the core mechanical dynamics.
+   * **R² = 0.0976 (Baseline)**: Initialized the framework and ran vanilla SINDy directly on raw telemetry data.
+   * **R² = 0.1349 (Physics-Informed I/O)**: Manually decoupled independent variables (control inputs: Steering, Throttle, Brake) and dependent variables (states: G-forces, Speed, Yaw) based on vehicle dynamics principles.
+   * **R² = 0.2560 (Signal Processing)**: Integrated a Savitzky-Golay (SG) filter to suppress high-frequency sensor noise while preserving the transient peaks crucial for derivative calculations.
+   * **R² = 0.2953 (Addressing Coefficient Scaling)**: Identified a critical algorithmic bottleneck: large magnitudes of high-speed $V^2$ terms resulted in extremely small coefficients, which were prematurely zeroed out by the STLSQ threshold. Introduced specific aerodynamic scaling/priors to force the retention of drag-related terms.
+   * **R² = 0.4334 (Experimental Control & Clean Data)**: 
+      * *Observation*: The initial dataset (GT3 at Nürburgring GP, 50-min race) contained too many unobserved latent variables (fuel weight reduction, tire thermal degradation, track bumpiness, and dirty air from dogfights).
+      * *Action*: Switched the baseline dataset to a controlled environment (Porsche 718 GT4 Clubsport at Red Bull Ring, continuous practice laps with heavy fuel and stable conditions). 
+      * *Result*: Stripping away complex aero and degradation noise allowed the model to successfully capture the core mechanical dynamics.
 
 ## Future Work:
 The current R² = 0.4334 proves the viability of SINDy on clean mechanical grip regimes. The next phases will focus on subsystem decoupling and progressive complexity:
