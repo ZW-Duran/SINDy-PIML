@@ -38,10 +38,9 @@ def run_sindy_analysis(df):
         t = dt
         print(f"Time column not found, using default time step dt={dt}.")
 
-    #aerodynamic terms often have small coefficients due to V^2 scaling, so we use a low threshold to retain them
-    feature_library = ps.PolynomialLibrary(degree=2)
-    optimizer = ps.STLSQ(threshold=1e-4)
-    model = ps.SINDy(feature_library=feature_library, optimizer=optimizer)
+    model = ps.SINDy(
+    feature_library=ps.PolynomialLibrary(degree=2),
+    optimizer=ps.STLSQ(threshold=0.0001, alpha=0.05))
     
     print("pySINDy is running：")
     model.fit(x=X, u=U, t=t)
